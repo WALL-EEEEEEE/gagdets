@@ -15,7 +15,7 @@ func (spider *IETSOnlineTestsSpider) New() {
 
 }
 
-func (spider *IETSOnlineTestsSpider) run() {
+func (spider *IETSOnlineTestsSpider) Run() {
 	c := colly.NewCollector()
 
 	// Find and visit all links
@@ -28,4 +28,8 @@ func (spider *IETSOnlineTestsSpider) run() {
 	for _, url := range spider.Urls {
 		c.Visit(url)
 	}
+}
+
+func main() {
+
 }
