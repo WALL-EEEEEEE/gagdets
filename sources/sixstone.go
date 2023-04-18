@@ -15,7 +15,7 @@ type SixtoneSpider struct {
 func (spider *SixtoneSpider) New() {
 }
 
-func (spider *SixtoneSpider) run() {
+func (spider *SixtoneSpider) Run() {
 	c := colly.NewCollector()
 
 	// Find and visit all links

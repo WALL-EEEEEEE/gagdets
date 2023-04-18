@@ -3,16 +3,18 @@ package sources
 import (
 	"fmt"
 
-	. "github.com/WALL-EEEEEEE/gagdets/core"
+	"github.com/WALL-EEEEEEE/gagdets/core"
 	"github.com/gocolly/colly/v2"
 )
 
 type IETSOnlineTestsSpider struct {
-	Spider
+	core.Spider
+	name string
 }
 
-func (spider *IETSOnlineTestsSpider) New() {
-
+func NewIETSSpider() IETSOnlineTestsSpider {
+	spider := IETSOnlineTestsSpider{name: "IETSOnlineTestsSpider"}
+	return spider
 }
 
 func (spider *IETSOnlineTestsSpider) Run() {
@@ -30,6 +32,7 @@ func (spider *IETSOnlineTestsSpider) Run() {
 	}
 }
 
-func main() {
-
+func init() {
+	iets_spider := NewIETSSpider()
+	core.Exec.Add(&iets_spider)
 }
