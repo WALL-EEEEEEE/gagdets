@@ -3,19 +3,21 @@ package sources
 import (
 	"fmt"
 
-	. "github.com/WALL-EEEEEEE/gagdets/core"
+	"github.com/WALL-EEEEEEE/gagdets/core"
 	"github.com/gocolly/colly/v2"
 )
 
 type IETSOnlineTestsSpider struct {
-	Spider
+	core.Spider
+	name string
 }
 
-func (spider *IETSOnlineTestsSpider) New() {
-
+func NewIETSSpider() IETSOnlineTestsSpider {
+	spider := IETSOnlineTestsSpider{name: "IETSOnlineTestsSpider"}
+	return spider
 }
 
-func (spider *IETSOnlineTestsSpider) run() {
+func (spider *IETSOnlineTestsSpider) Run() {
 	c := colly.NewCollector()
 
 	// Find and visit all links
@@ -28,4 +30,9 @@ func (spider *IETSOnlineTestsSpider) run() {
 	for _, url := range spider.Urls {
 		c.Visit(url)
 	}
+}
+
+func init() {
+	iets_spider := NewIETSSpider()
+	core.Exec.Add(&iets_spider)
 }
