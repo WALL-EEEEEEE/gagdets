@@ -45,24 +45,35 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collec
 func (spider *IETSOnlineTestsSpider) Run(collector *core.Collector) {
 	c := colly.NewCollector()
 	urls := set.New(spider.Urls...)
-
 	c.OnRequest(func(r *colly.Request) {
 		log.Infof("Visiting %s", r.URL)
 	})
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		req_url := e.Request.URL.String()
-		topic_href := e.Attr("href")
-		topic_href_regex := regexp.MustCompile("/ielts-mock-test.+-speaking-practice-test.*")
-		if urls.Has(req_url) && topic_href_regex.MatchString(topic_href) {
+		href := e.Attr("href")
+		topic_href_regex := regexp.MustCompile("/.*speaking-practice-test.*")
+		page_url_regex := regexp.MustCompile(`https:\/\/ieltsonlinetests\.com\/speaking\-test\-collection(\?page=\d+)?`)
+		log.Debugf("%s, %s: %v, %v", req_url, href, (urls.Has(req_url) || page_url_regex.MatchString(req_url)), topic_href_regex.MatchString(href))
+		if (urls.Has(req_url) || page_url_regex.MatchString(req_url)) && topic_href_regex.MatchString(href) {
 			topic_name := e.Text
 			log.Infof("Find a topic: %s", topic_name)
-			topic_url := fmt.Sprintf("https://ieltsonlinetests.com%s", topic_href)
-			log.Info(topic_url)
+			topic_url := fmt.Sprintf("https://ieltsonlinetests.com%s", href)
+			log.Debug(topic_url)
 			e.Request.Visit(topic_url)
 		}
 	})
 	c.OnHTML("div[id='recording-accordion']", func(h *colly.HTMLElement) {
 		spider.parseTopicList(h, collector)
+	})
+	c.OnHTML("nav[class~='pager']", func(h *colly.HTMLElement) {
+		next_page_href := h.ChildAttr("ul > li.pager__item--next > a", "href")
+		if len(next_page_href) > 0 {
+			next_page_link := "https://ieltsonlinetests.com/speaking-test-collection" + next_page_href
+			log.Info(next_page_link)
+			h.Request.Visit(next_page_link)
+		} else {
+			log.Info("There are'nt any new pages anymore!")
+		}
 	})
 	c.OnResponse(func(r *colly.Response) {
 		if r.StatusCode != 200 {

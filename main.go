@@ -11,7 +11,7 @@ func main() {
 	core.Exec.Output(func(collector *core.Collector) {
 		cnt := 1
 		for item := range *collector {
-			log.Info(item)
+			log.Debug(item)
 			cnt++
 		}
 		log.Infof("Found %d topics!", cnt)
