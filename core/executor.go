@@ -16,6 +16,8 @@ type Runnable struct {
 func (runnable Runnable) GetName() string {
 	return runnable.name
 }
+func (runnable Runnable) Run() {
+}
 
 type DefaultExecutor struct {
 	IExecutor
@@ -41,7 +43,7 @@ func (executor *DefaultExecutor) Add(task IRunnable) {
 func (executor *DefaultExecutor) List() []string {
 	var names []string
 	for _, task := range executor.tasks {
-		names = append(names, task.(Runnable).GetName())
+		names = append(names, task.GetName())
 	}
 	return names
 }
