@@ -1,6 +1,10 @@
 package core
 
-type IExecutor interface {
+type Runnable interface {
+	Run()
+}
+
+type Executor interface {
 	Run()
 	GetName() string
 	Add(task IRunnable)
