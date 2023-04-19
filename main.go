@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	core.Exec.List()
+	core.Exec.Run()
 }

@@ -2,25 +2,17 @@ package core
 
 type IExecutor interface {
 	Run()
+	GetName() string
+	Add(task IRunnable)
+	List() []string
 }
 
 type IRunnable interface {
 	Run()
-}
-
-type Runnable struct {
-	IRunnable
-	name string
-}
-
-func (runnable Runnable) GetName() string {
-	return runnable.name
-}
-func (runnable Runnable) Run() {
+	GetName() string
 }
 
 type DefaultExecutor struct {
-	IExecutor
 	name  string
 	tasks []IRunnable
 }

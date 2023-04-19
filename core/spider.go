@@ -1,13 +1,18 @@
 package core
 
 type Spider struct {
-	Runnable
+	name string
 	Urls []string
 }
 
 func (*Spider) Run() {
 }
 
-func (spider *Spider) New(name string) {
-	spider.name = name
+func NewSpider(name string, urls []string) Spider {
+	spider := Spider{name: name, Urls: urls}
+	return spider
+}
+
+func (spider *Spider) GetName() string {
+	return spider.name
 }
