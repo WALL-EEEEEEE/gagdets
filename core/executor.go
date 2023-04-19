@@ -1,34 +1,36 @@
 package core
 
-type Runnable interface {
-	Run()
-}
+type Collector chan interface{}
 
-type Executor interface {
+type IExecutor interface {
 	Run()
 	GetName() string
 	Add(task IRunnable)
 	List() []string
+	Output(callback func(collector *Collector))
 }
 
 type IRunnable interface {
-	Run()
+	Run(collector *Collector)
 	GetName() string
 }
 
 type DefaultExecutor struct {
-	name  string
-	tasks []IRunnable
+	name      string
+	tasks     []IRunnable
+	collector *Collector
 }
 
 func NewDFExecutor(name string) DefaultExecutor {
-	exec := DefaultExecutor{name: name}
+	collector := make(Collector, 100)
+	exec := DefaultExecutor{name: name, collector: &collector}
 	return exec
 }
 
 func (executor *DefaultExecutor) Run() {
+	defer close(*executor.collector)
 	for _, task := range executor.tasks {
-		task.Run()
+		task.Run(executor.collector)
 	}
 }
 
@@ -42,6 +44,9 @@ func (executor *DefaultExecutor) List() []string {
 		names = append(names, task.GetName())
 	}
 	return names
+}
+func (executor *DefaultExecutor) Output(callback func(collector *Collector)) {
+	callback(executor.collector)
 }
 
 var Exec = NewDFExecutor("default")

@@ -24,7 +24,7 @@ func NewIETSSpider() IETSOnlineTestsSpider {
 	return spider
 }
 
-func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement) (topics []*core.Topic) {
+func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collector *core.Collector) {
 	part1 := e.ChildTexts("#recording-accordion > div:nth-child(2) > #part1 > div > ul > li") //Introduction and Interview Part
 	part2 := e.ChildTexts("#recording-accordion > div:nth-child(3) > #part2 > div > ul > li") //Topic Part
 	part3 := e.ChildTexts("#recording-accordion > div:nth-child(4) > #part3 > div > ul > li") //Topic Discussion
@@ -38,12 +38,11 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement) (topic
 			Author:     "Wall'E's Robot",
 			ExtraLink:  e.Request.URL.String(),
 		}
-		topics = append(topics, &topic)
+		*collector <- topic
 	}
-	return topics
 }
 
-func (spider *IETSOnlineTestsSpider) Run() {
+func (spider *IETSOnlineTestsSpider) Run(collector *core.Collector) {
 	c := colly.NewCollector()
 	urls := set.New(spider.Urls...)
 
@@ -63,7 +62,7 @@ func (spider *IETSOnlineTestsSpider) Run() {
 		}
 	})
 	c.OnHTML("div[id='recording-accordion']", func(h *colly.HTMLElement) {
-		spider.parseTopicList(h)
+		spider.parseTopicList(h, collector)
 	})
 	c.OnResponse(func(r *colly.Response) {
 		if r.StatusCode != 200 {
