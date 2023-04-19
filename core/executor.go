@@ -1,13 +1,14 @@
 package core
 
 type Collector chan interface{}
+type IPipe func(collector *Collector)
 
 type IExecutor interface {
-	Run()
+	Start()
 	GetName() string
 	Add(task IRunnable)
+	AddPipe(pipe IPipe)
 	List() []string
-	Output(callback func(collector *Collector))
 }
 
 type IRunnable interface {
@@ -18,6 +19,7 @@ type IRunnable interface {
 type DefaultExecutor struct {
 	name      string
 	tasks     []IRunnable
+	pipes     []IPipe
 	collector *Collector
 }
 
@@ -27,17 +29,21 @@ func NewDFExecutor(name string) DefaultExecutor {
 	return exec
 }
 
-func (executor *DefaultExecutor) Run() {
+func (executor *DefaultExecutor) Start() {
 	defer close(*executor.collector)
 	for _, task := range executor.tasks {
-		task.Run(executor.collector)
+		go task.Run(executor.collector)
 	}
+	executor.Output()
 }
 
 func (executor *DefaultExecutor) Add(task IRunnable) {
 	executor.tasks = append(executor.tasks, task)
 }
 
+func (executor *DefaultExecutor) AddPipe(pipe IPipe) {
+	executor.pipes = append(executor.pipes, pipe)
+}
 func (executor *DefaultExecutor) List() []string {
 	var names []string
 	for _, task := range executor.tasks {
@@ -45,8 +51,10 @@ func (executor *DefaultExecutor) List() []string {
 	}
 	return names
 }
-func (executor *DefaultExecutor) Output(callback func(collector *Collector)) {
-	callback(executor.collector)
+func (executor *DefaultExecutor) Output() {
+	for _, pipe := range executor.pipes {
+		go pipe(executor.collector)
+	}
 }
 
 var Exec = NewDFExecutor("default")
