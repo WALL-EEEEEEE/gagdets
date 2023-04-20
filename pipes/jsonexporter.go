@@ -7,15 +7,16 @@ import (
 	"time"
 
 	"github.com/WALL-EEEEEEE/gagdets/core"
+	"github.com/WALL-EEEEEEE/gagdets/sources"
 	log "github.com/sirupsen/logrus"
 )
 
 func JsonPipe(collector chan interface{}) {
 	cnt := 1
-	data := []core.Item{}
+	data := []sources.Topic{}
 	for item := range collector {
-		log.Infof("JsonPipe: %v -> %v", collector, item)
-		data = append(data, item)
+		log.Infof("JsonPipe: %v -> %v", collector, item.(sources.Topic).Content)
+		data = append(data, item.(sources.Topic))
 		cnt += 1
 	}
 	json_data, _ := json.MarshalIndent(data, "", " ")

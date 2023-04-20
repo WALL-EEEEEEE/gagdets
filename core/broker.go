@@ -21,18 +21,21 @@ func NewBroker[T any]() *Broker[T] {
 }
 
 func (b *Broker[T]) Start() {
+	broadcast_cnt := 1
 	for {
 		select {
 		case <-b.stopCh:
+			log.Infof("Broker broadcast: %d", broadcast_cnt)
 			return
 		case msgCh := <-b.subCh:
 			b.subs[msgCh] = struct{}{}
 		case msgCh := <-b.unsubCh:
 			delete(b.subs, msgCh)
 		case msg := <-b.publishCh:
+			broadcast_cnt++
 			for msgCh := range b.subs {
 				// msgCh is buffered, use non-blocking send to protect the broker:
-				log.Debugf("%v <- %v", msgCh, msg)
+				//log.Debugf("%v <- %v", msgCh, msg)
 				select {
 				case msgCh <- msg:
 				default:
@@ -44,10 +47,12 @@ func (b *Broker[T]) Start() {
 
 func (b *Broker[T]) Close() {
 	close(b.stopCh)
-	close(b.publishCh)
-	for subch := range b.subs {
-		close(subch)
-	}
+	/*
+		close(b.publishCh)
+		for subch := range b.subs {
+			close(subch)
+		}
+	*/
 }
 
 func (b *Broker[T]) Wait() {
