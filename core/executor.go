@@ -1,5 +1,7 @@
 package core
 
+import "sync"
+
 type Collector chan interface{}
 type IPipe func(collector *Collector)
 
@@ -21,20 +23,30 @@ type DefaultExecutor struct {
 	tasks     []IRunnable
 	pipes     []IPipe
 	collector *Collector
+	broker    *Broker[interface{}]
 }
 
 func NewDFExecutor(name string) DefaultExecutor {
-	collector := make(Collector, 100)
-	exec := DefaultExecutor{name: name, collector: &collector}
+	broker := NewBroker[interface{}]()
+	collector := Collector(broker.publishCh)
+	exec := DefaultExecutor{name: name, collector: &collector, broker: broker}
 	return exec
 }
 
 func (executor *DefaultExecutor) Start() {
-	defer close(*executor.collector)
+	go executor.broker.Start()
+	defer executor.broker.Close()
+	var wg sync.WaitGroup
+	_start := func(task IRunnable) {
+		defer wg.Done()
+		task.Run(executor.collector)
+	}
 	for _, task := range executor.tasks {
-		go task.Run(executor.collector)
+		wg.Add(1)
+		go _start(task)
 	}
 	executor.Output()
+	wg.Wait()
 }
 
 func (executor *DefaultExecutor) Add(task IRunnable) {
@@ -53,7 +65,8 @@ func (executor *DefaultExecutor) List() []string {
 }
 func (executor *DefaultExecutor) Output() {
 	for _, pipe := range executor.pipes {
-		go pipe(executor.collector)
+		collector := Collector(executor.broker.Subscribe())
+		go pipe(&collector)
 	}
 }
 

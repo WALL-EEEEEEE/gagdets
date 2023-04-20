@@ -69,7 +69,7 @@ func (spider *IETSOnlineTestsSpider) Run(collector *core.Collector) {
 		next_page_href := h.ChildAttr("ul > li.pager__item--next > a", "href")
 		if len(next_page_href) > 0 {
 			next_page_link := "https://ieltsonlinetests.com/speaking-test-collection" + next_page_href
-			log.Info(next_page_link)
+			log.Debug(next_page_link)
 			h.Request.Visit(next_page_link)
 		} else {
 			log.Info("There are'nt any new pages anymore!")
