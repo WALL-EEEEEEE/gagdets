@@ -1,5 +1,7 @@
 package core
 
+import log "github.com/sirupsen/logrus"
+
 type Broker[T any] struct {
 	stopCh    chan struct{}
 	publishCh chan T
@@ -30,6 +32,7 @@ func (b *Broker[T]) Start() {
 		case msg := <-b.publishCh:
 			for msgCh := range b.subs {
 				// msgCh is buffered, use non-blocking send to protect the broker:
+				log.Debugf("%v <- %v", msgCh, msg)
 				select {
 				case msgCh <- msg:
 				default:
@@ -52,7 +55,7 @@ func (b *Broker[T]) Wait() {
 }
 
 func (b *Broker[T]) Subscribe() chan T {
-	msgCh := make(chan T, 5)
+	msgCh := make(chan T, 1)
 	b.subCh <- msgCh
 	return msgCh
 }

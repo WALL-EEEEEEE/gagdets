@@ -1,9 +1,11 @@
 package core
 
-import "sync"
+import (
+	"sync"
+)
 
 type Collector chan interface{}
-type IPipe func(collector *Collector)
+type IPipe func(ch chan interface{})
 
 type IExecutor interface {
 	Start()
@@ -14,7 +16,7 @@ type IExecutor interface {
 }
 
 type IRunnable interface {
-	Run(collector *Collector)
+	Run(collector chan interface{})
 	GetName() string
 }
 
@@ -22,31 +24,52 @@ type DefaultExecutor struct {
 	name      string
 	tasks     []IRunnable
 	pipes     []IPipe
-	collector *Collector
+	collector chan interface{}
 	broker    *Broker[interface{}]
 }
 
 func NewDFExecutor(name string) DefaultExecutor {
 	broker := NewBroker[interface{}]()
-	collector := Collector(broker.publishCh)
-	exec := DefaultExecutor{name: name, collector: &collector, broker: broker}
+	exec := DefaultExecutor{name: name, collector: broker.publishCh, broker: broker}
 	return exec
 }
 
-func (executor *DefaultExecutor) Start() {
-	go executor.broker.Start()
-	defer executor.broker.Close()
-	var wg sync.WaitGroup
+func (executor *DefaultExecutor) startTask(wg *sync.WaitGroup) {
 	_start := func(task IRunnable) {
-		defer wg.Done()
-		task.Run(executor.collector)
+		defer func() {
+			wg.Done()
+		}()
+		task.Run(executor.broker.publishCh)
 	}
 	for _, task := range executor.tasks {
 		wg.Add(1)
 		go _start(task)
 	}
-	executor.Output()
-	wg.Wait()
+}
+
+func (executor *DefaultExecutor) startPipe(wg *sync.WaitGroup) {
+	_start := func(pipe IPipe) {
+		defer func() {
+			wg.Done()
+		}()
+		collector := executor.broker.Subscribe()
+		pipe(collector)
+	}
+	for _, pipe := range executor.pipes {
+		wg.Add(1)
+		go _start(pipe)
+	}
+}
+
+func (executor *DefaultExecutor) Start() {
+	go executor.broker.Start()
+	var task_wg sync.WaitGroup
+	var pipe_wg sync.WaitGroup
+	executor.startTask(&task_wg)
+	executor.startPipe(&pipe_wg)
+	task_wg.Wait()
+	executor.broker.Close()
+	pipe_wg.Wait()
 }
 
 func (executor *DefaultExecutor) Add(task IRunnable) {
@@ -62,12 +85,6 @@ func (executor *DefaultExecutor) List() []string {
 		names = append(names, task.GetName())
 	}
 	return names
-}
-func (executor *DefaultExecutor) Output() {
-	for _, pipe := range executor.pipes {
-		collector := Collector(executor.broker.Subscribe())
-		go pipe(&collector)
-	}
 }
 
 var Exec = NewDFExecutor("default")

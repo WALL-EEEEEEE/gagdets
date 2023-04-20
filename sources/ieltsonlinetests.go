@@ -16,21 +16,22 @@ var iets_site = "https://ieltsonlinetests.com/speaking-test-collection"
 
 type IETSOnlineTestsSpider struct {
 	core.Spider
+	cnt int
 }
 
 func NewIETSSpider() IETSOnlineTestsSpider {
 	urls := []string{iets_site}
-	spider := IETSOnlineTestsSpider{core.NewSpider("IETSOnlineTestsSpider", urls)}
+	spider := IETSOnlineTestsSpider{core.NewSpider("IETSOnlineTestsSpider", urls), 0}
 	return spider
 }
 
-func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collector *core.Collector) {
+func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collector chan interface{}) {
 	part1 := e.ChildTexts("#recording-accordion > div:nth-child(2) > #part1 > div > ul > li") //Introduction and Interview Part
 	part2 := e.ChildTexts("#recording-accordion > div:nth-child(3) > #part2 > div > ul > li") //Topic Part
 	part3 := e.ChildTexts("#recording-accordion > div:nth-child(4) > #part3 > div > ul > li") //Topic Discussion
 
 	for _, item := range utils.Concat([][]string{part1, part2, part3}) {
-		topic := core.Topic{
+		topic := Topic{
 			Content:    item,
 			Source:     "IELTS",
 			CreateTime: time.Now(),
@@ -38,11 +39,13 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collec
 			Author:     "Wall'E's Robot",
 			ExtraLink:  e.Request.URL.String(),
 		}
-		*collector <- topic
+		log.Infof("Topic: %s", item)
+		collector <- topic
+		spider.cnt++
 	}
 }
 
-func (spider *IETSOnlineTestsSpider) Run(collector *core.Collector) {
+func (spider *IETSOnlineTestsSpider) Run(collector chan interface{}) {
 	c := colly.NewCollector()
 	urls := set.New(spider.Urls...)
 	c.OnRequest(func(r *colly.Request) {
@@ -83,6 +86,8 @@ func (spider *IETSOnlineTestsSpider) Run(collector *core.Collector) {
 	for _, url := range spider.Urls {
 		c.Visit(url)
 	}
+	c.Wait()
+	log.Infof("Spider found: %d topics.", spider.cnt)
 }
 
 func init() {

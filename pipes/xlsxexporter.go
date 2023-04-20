@@ -5,16 +5,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func StdPipe(collector *core.Collector) {
+func XlsxPipe(collector *core.Collector) {
 	topic_cnt := 1
 	for item := range *collector {
-		log.Infof("StdPipe: %v -> %v", *collector, item)
-		log.Debug(item)
+		log.Info(item)
 		topic_cnt += 1
 	}
 	log.Infof("Found %d topics", topic_cnt)
 }
 
 func init() {
-	//core.Exec.AddPipe(StdPipe)
+	//core.Exec.AddPipe(XlsxPipe)
 }
