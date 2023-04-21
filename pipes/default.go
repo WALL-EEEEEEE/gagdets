@@ -2,19 +2,19 @@ package pipes
 
 import (
 	"github.com/WALL-EEEEEEE/gagdets/core"
+	"github.com/WALL-EEEEEEE/gagdets/sources"
 	log "github.com/sirupsen/logrus"
 )
 
-func StdPipe(collector *core.Collector) {
-	topic_cnt := 1
-	for item := range *collector {
-		log.Infof("StdPipe: %v -> %v", *collector, item)
-		log.Debug(item)
+func StdPipe(collector chan interface{}) {
+	topic_cnt := 0
+	for item := range collector {
+		log.Debugf("StdPipe: %v -> %v", collector, item.(sources.Topic).Content)
 		topic_cnt += 1
 	}
-	log.Infof("Found %d topics", topic_cnt)
+	log.Infof("StdPipe: %d topics", topic_cnt)
 }
 
 func init() {
-	//core.Exec.AddPipe(StdPipe)
+	core.Exec.AddPipe(StdPipe)
 }

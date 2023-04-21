@@ -20,6 +20,18 @@ type IRunnable interface {
 	GetName() string
 }
 
+type Task struct {
+	name string
+}
+
+func NewTask(name string) Task {
+	return Task{name: name}
+}
+
+func (task *Task) GetName() string {
+	return task.name
+}
+
 type DefaultExecutor struct {
 	name      string
 	tasks     []IRunnable

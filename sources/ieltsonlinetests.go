@@ -3,6 +3,7 @@ package sources
 import (
 	"fmt"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/WALL-EEEEEEE/gagdets/core"
@@ -29,8 +30,13 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collec
 	part1 := e.ChildTexts("#recording-accordion > div:nth-child(2) > #part1 > div > ul > li") //Introduction and Interview Part
 	part2 := e.ChildTexts("#recording-accordion > div:nth-child(3) > #part2 > div > ul > li") //Topic Part
 	part3 := e.ChildTexts("#recording-accordion > div:nth-child(4) > #part3 > div > ul > li") //Topic Discussion
+	stripHtml := func(s string) string {
+		r := regexp.MustCompile(`<.*?>`)
+		return r.ReplaceAllString(s, "")
+	}
 
 	for _, item := range utils.Concat([][]string{part1, part2, part3}) {
+		item = strings.TrimSpace(stripHtml(item))
 		topic := Topic{
 			Content:    item,
 			Source:     "IELTS",
@@ -59,7 +65,7 @@ func (spider *IETSOnlineTestsSpider) Run(collector chan interface{}) {
 		log.Debugf("%s, %s: %v, %v", req_url, href, (urls.Has(req_url) || page_url_regex.MatchString(req_url)), topic_href_regex.MatchString(href))
 		if (urls.Has(req_url) || page_url_regex.MatchString(req_url)) && topic_href_regex.MatchString(href) {
 			topic_name := e.Text
-			log.Infof("Find a topic: %s", topic_name)
+			log.Debugf("Find a topic: %s", topic_name)
 			topic_url := fmt.Sprintf("https://ieltsonlinetests.com%s", href)
 			log.Debug(topic_url)
 			e.Request.Visit(topic_url)
@@ -91,6 +97,6 @@ func (spider *IETSOnlineTestsSpider) Run(collector chan interface{}) {
 }
 
 func init() {
-	iets_spider := NewIETSSpider()
-	core.Exec.Add(&iets_spider)
+	//iets_spider := NewIETSSpider()
+	//core.Exec.Add(&iets_spider)
 }

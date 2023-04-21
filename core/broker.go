@@ -1,6 +1,9 @@
 package core
 
-import log "github.com/sirupsen/logrus"
+import (
+	"github.com/bobg/go-generics/maps"
+	log "github.com/sirupsen/logrus"
+)
 
 type Broker[T any] struct {
 	stopCh    chan struct{}
@@ -25,7 +28,11 @@ func (b *Broker[T]) Start() {
 	for {
 		select {
 		case <-b.stopCh:
-			log.Infof("Broker broadcast: %d", broadcast_cnt)
+			log.Debugf("Broker broadcast: %d", broadcast_cnt)
+			close(b.publishCh)
+			for subch := range b.subs {
+				close(subch)
+			}
 			return
 		case msgCh := <-b.subCh:
 			b.subs[msgCh] = struct{}{}
@@ -33,12 +40,21 @@ func (b *Broker[T]) Start() {
 			delete(b.subs, msgCh)
 		case msg := <-b.publishCh:
 			broadcast_cnt++
-			for msgCh := range b.subs {
-				// msgCh is buffered, use non-blocking send to protect the broker:
-				//log.Debugf("%v <- %v", msgCh, msg)
-				select {
-				case msgCh <- msg:
-				default:
+			resi_subs := maps.Dup(b.subs)
+			for len(resi_subs) > 0 {
+				for msgCh := range resi_subs {
+					// msgCh is buffered, use non-blocking send to protect the broker:
+					if len(resi_subs) == 1 {
+						msgCh <- msg
+						delete(resi_subs, msgCh)
+					} else {
+						select {
+						case msgCh <- msg:
+							delete(resi_subs, msgCh)
+						default:
+						}
+					}
+
 				}
 			}
 		}
@@ -47,12 +63,6 @@ func (b *Broker[T]) Start() {
 
 func (b *Broker[T]) Close() {
 	close(b.stopCh)
-	/*
-		close(b.publishCh)
-		for subch := range b.subs {
-			close(subch)
-		}
-	*/
 }
 
 func (b *Broker[T]) Wait() {

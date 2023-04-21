@@ -1,7 +1,7 @@
 package core
 
 type Spider struct {
-	name string
+	Task
 	Urls []string
 }
 
@@ -9,7 +9,7 @@ func (*Spider) Run() {
 }
 
 func NewSpider(name string, urls []string) Spider {
-	spider := Spider{name: name, Urls: urls}
+	spider := Spider{Task: NewTask(name), Urls: urls}
 	return spider
 }
 
