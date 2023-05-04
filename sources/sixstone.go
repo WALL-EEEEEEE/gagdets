@@ -3,10 +3,10 @@ package sources
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/WALL-EEEEEEE/gagdets/core"
 	"github.com/bobg/go-generics/set"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gocolly/colly/v2"
 )
@@ -38,9 +38,9 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 	c := colly.NewCollector()
 	urls := set.New(spider.Urls...)
 
-	// Find and visit all links
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		e.Request.Visit(e.Attr("href"))
+	c.OnResponse(func(r *colly.Response) {
+		log.Info(r.StatusCode)
+		log.Info(r.Body)
 	})
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
