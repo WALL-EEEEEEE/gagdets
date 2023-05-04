@@ -19,7 +19,9 @@ func TecentDocPipe(collector chan interface{}) {
 		cnt += 1
 	}
 	client := resty.New()
-	resp, err := client.R().SetBody(data).
+	var result struct {
+	}
+	_, err := client.R().SetBody(data).SetResult(result).
 		Post(tecent_link_api)
 	if err != nil {
 		log.Error(err)

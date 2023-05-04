@@ -16,7 +16,7 @@ func NewTestTask() TestTask {
 	return TestTask{Task: core.NewTask("TestTask")}
 }
 
-func (task *TestTask) Run(collector chan interface{}) {
+func (task *TestTask) Run(collector *core.Collector) {
 	var topics []Topic
 	log.Infof("Start Task %s", task.GetName())
 	json_file := "/mnt/d/Project/go/gagdets/data-Fri Apr 21 17:03:33 CST 2023.json"
@@ -30,7 +30,7 @@ func (task *TestTask) Run(collector chan interface{}) {
 	}
 	for _, topic := range topics {
 		log.Infof("Find Topic: %+v", topic)
-		collector <- topic
+		*collector <- topic
 	}
 
 }

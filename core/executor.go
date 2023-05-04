@@ -16,7 +16,7 @@ type IExecutor interface {
 }
 
 type IRunnable interface {
-	Run(collector chan interface{})
+	Run(collector *Collector)
 	GetName() string
 }
 
@@ -36,13 +36,14 @@ type DefaultExecutor struct {
 	name      string
 	tasks     []IRunnable
 	pipes     []IPipe
-	collector chan interface{}
+	collector *Collector
 	broker    *Broker[interface{}]
 }
 
 func NewDFExecutor(name string) DefaultExecutor {
 	broker := NewBroker[interface{}]()
-	exec := DefaultExecutor{name: name, collector: broker.publishCh, broker: broker}
+	collector := Collector(broker.publishCh)
+	exec := DefaultExecutor{name: name, collector: &collector, broker: broker}
 	return exec
 }
 
@@ -51,7 +52,7 @@ func (executor *DefaultExecutor) startTask(wg *sync.WaitGroup) {
 		defer func() {
 			wg.Done()
 		}()
-		task.Run(executor.broker.publishCh)
+		task.Run(executor.collector)
 	}
 	for _, task := range executor.tasks {
 		wg.Add(1)

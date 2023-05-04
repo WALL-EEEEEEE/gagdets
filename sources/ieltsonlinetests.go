@@ -26,7 +26,7 @@ func NewIETSSpider() IETSOnlineTestsSpider {
 	return spider
 }
 
-func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collector chan interface{}) {
+func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collector *core.Collector) {
 	part1 := e.ChildTexts("#recording-accordion > div:nth-child(2) > #part1 > div > ul > li") //Introduction and Interview Part
 	part2 := e.ChildTexts("#recording-accordion > div:nth-child(3) > #part2 > div > ul > li") //Topic Part
 	part3 := e.ChildTexts("#recording-accordion > div:nth-child(4) > #part3 > div > ul > li") //Topic Discussion
@@ -46,12 +46,12 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collec
 			ExtraLink:  e.Request.URL.String(),
 		}
 		log.Infof("Topic: %s", item)
-		collector <- topic
+		*collector <- topic
 		spider.cnt++
 	}
 }
 
-func (spider *IETSOnlineTestsSpider) Run(collector chan interface{}) {
+func (spider *IETSOnlineTestsSpider) Run(collector *core.Collector) {
 	c := colly.NewCollector()
 	urls := set.New(spider.Urls...)
 	c.OnRequest(func(r *colly.Request) {
