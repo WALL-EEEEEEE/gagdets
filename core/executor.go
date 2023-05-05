@@ -5,17 +5,17 @@ import (
 )
 
 type Collector chan interface{}
-type IPipe func(ch chan interface{})
 
 type IExecutor interface {
 	Start()
 	GetName() string
 	Add(task IRunnable)
-	AddPipe(pipe IPipe)
+	AddPipe(pipe Pipe)
 	List() []string
 }
 
 type IRunnable interface {
+	Serv
 	Run(collector *Collector)
 	GetName() string
 }
@@ -30,6 +30,10 @@ func NewTask(name string) Task {
 
 func (task *Task) GetName() string {
 	return task.name
+}
+
+func (task *Task) GetType() []ServType {
+	return []ServType{TASK}
 }
 
 type DefaultExecutor struct {
@@ -65,8 +69,8 @@ func (executor *DefaultExecutor) startPipe(wg *sync.WaitGroup) {
 		defer func() {
 			wg.Done()
 		}()
-		collector := executor.broker.Subscribe()
-		pipe(collector)
+		collector := Collector(executor.broker.Subscribe())
+		pipe.Run(&collector)
 	}
 	for _, pipe := range executor.pipes {
 		wg.Add(1)

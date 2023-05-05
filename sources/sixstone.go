@@ -56,5 +56,5 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 
 func init() {
 	sixtone_spider := NewSixtoneSpider()
-	core.Exec.Add(&sixtone_spider)
+	core.Reg.Register(&sixtone_spider)
 }

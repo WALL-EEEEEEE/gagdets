@@ -36,6 +36,6 @@ func (task *TestTask) Run(collector *core.Collector) {
 }
 
 func init() {
-	test_task := NewTestTask()
-	core.Exec.Add(&test_task)
+	testTask := NewTestTask()
+	core.Reg.Register(&testTask)
 }

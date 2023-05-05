@@ -16,3 +16,7 @@ func NewSpider(name string, urls []string) Spider {
 func (spider *Spider) GetName() string {
 	return spider.name
 }
+
+func (spider *Spider) GetType() []ServType {
+	return []ServType{SPIDER}
+}

@@ -97,6 +97,6 @@ func (spider *IETSOnlineTestsSpider) Run(collector *core.Collector) {
 }
 
 func init() {
-	//iets_spider := NewIETSSpider()
-	//core.Exec.Add(&iets_spider)
+	iets_spider := NewIETSSpider()
+	core.Reg.Register(&iets_spider)
 }

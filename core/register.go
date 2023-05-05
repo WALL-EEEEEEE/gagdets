@@ -1,36 +1,56 @@
 package core
 
-type RegisterType int64
+type ServType int64
+
+type ServHub map[ServType]map[string]interface{}
 
 const (
-	SPIDER RegisterType = iota
+	SPIDER ServType = iota
 	PIPE
+	TASK
 )
 
-var register_types = []RegisterType{
+var service_types = []ServType{
 	SPIDER,
 	PIPE,
+	TASK,
+}
+var Reg Registry
+
+type Registry struct {
+	hub ServHub
 }
 
-type RegisterCenter struct {
-	pool map[RegisterType]map[string]interface{}
+type Serv interface {
+	GetName() string
+	GetType() []ServType
 }
 
-func NewRC() RegisterCenter {
-	pool := new(map[RegisterType]map[string]interface{})
-	for _, r_type := range register_types {
-		(*pool)[r_type] = map[string]interface{}{}
+func NewRegistry() Registry {
+	hub := new(ServHub)
+	for _, r_type := range service_types {
+		(*hub)[r_type] = map[string]interface{}{}
 	}
-	return RegisterCenter{pool: *pool}
+	return Registry{hub: *hub}
 }
 
-func (rc *RegisterCenter) GetByType(Type RegisterType) map[string]interface{} {
-	return rc.pool[Type]
+func (reg *Registry) GetByType(servType ServType) map[string]interface{} {
+	return reg.hub[servType]
 }
 
-var rc = NewRC()
+func (reg *Registry) Register(serv Serv) {
+	for _, typ := range serv.GetType() {
+		interfaces := reg.GetByType(typ)
+		interfaces[serv.GetName()] = serv
+	}
+}
+func (reg *Registry) UnRegister(serv Serv) {
+	for _, typ := range serv.GetType() {
+		interfaces := reg.GetByType(typ)
+		delete(interfaces, serv.GetName())
+	}
+}
 
-func Register(Type RegisterType, name string, inter interface{}) {
-	interfaces := rc.GetByType(Type)
-	interfaces[name] = inter
+func init() {
+	Reg = NewRegistry()
 }

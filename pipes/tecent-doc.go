@@ -9,12 +9,19 @@ import (
 
 var tecent_link_api = "https://api.hiflow.tencent.com/engine/webhook/31/1646403589125844994"
 
-func TecentDocPipe(collector chan interface{}) {
+type TecentDocPipe struct {
+	core.Pipe
+}
 
+func NewTecentDocPipe() StdPipe {
+	return StdPipe{Pipe: core.NewPipe("TecentDocPipe")}
+}
+
+func (pipe *TecentDocPipe) Run(collector *core.Collector) {
 	cnt := 1
 	data := []sources.Topic{}
-	for item := range collector {
-		log.Debugf("JsonPipe: %v -> %v", collector, item.(sources.Topic).Content)
+	for item := range *collector {
+		log.Debugf("TecentDocPipe: %v -> %v", collector, item.(sources.Topic).Content)
 		data = append(data, item.(sources.Topic))
 		cnt += 1
 	}
@@ -31,5 +38,6 @@ func TecentDocPipe(collector chan interface{}) {
 }
 
 func init() {
-	core.Exec.AddPipe(TecentDocPipe)
+	tecentDocPipe := NewTecentDocPipe()
+	core.Reg.Register(&tecentDocPipe)
 }
