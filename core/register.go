@@ -10,7 +10,7 @@ const (
 	TASK
 )
 
-var service_types = []ServType{
+var servTypes = []ServType{
 	SPIDER,
 	PIPE,
 	TASK,
@@ -26,12 +26,16 @@ type Serv interface {
 	GetType() []ServType
 }
 
+func GetSupportedServTypes() []ServType {
+	return servTypes
+}
+
 func NewRegistry() Registry {
-	hub := new(ServHub)
-	for _, r_type := range service_types {
-		(*hub)[r_type] = map[string]interface{}{}
+	hub := make(ServHub)
+	for _, r_type := range servTypes {
+		hub[r_type] = map[string]interface{}{}
 	}
-	return Registry{hub: *hub}
+	return Registry{hub: hub}
 }
 
 func (reg *Registry) GetByType(servType ServType) map[string]interface{} {
