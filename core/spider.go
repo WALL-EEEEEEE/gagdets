@@ -5,7 +5,7 @@ type Spider struct {
 	Urls []string
 }
 
-func (*Spider) Run() {
+func (*Spider) Run(collector *Collector) {
 }
 
 func NewSpider(name string, urls []string) Spider {
