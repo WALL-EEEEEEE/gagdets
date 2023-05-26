@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/WALL-EEEEEEE/gagdets/core"
-	"github.com/WALL-EEEEEEE/gagdets/sources"
+	"github.com/WALL-EEEEEEE/gagdets/items"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -21,10 +21,10 @@ func NewJsonPipe() StdPipe {
 
 func (pipe *JsonPipe) Run(collector *core.Collector) {
 	cnt := 0
-	data := []sources.Topic{}
+	data := []items.Topic{}
 	for item := range *collector {
-		log.Debugf("JsonPipe: %v -> %v", collector, item.(sources.Topic).Content)
-		data = append(data, item.(sources.Topic))
+		log.Debugf("JsonPipe: %v -> %v", collector, item.(items.Topic).Content)
+		data = append(data, item.(items.Topic))
 		cnt += 1
 	}
 	if len(data) < 1 {

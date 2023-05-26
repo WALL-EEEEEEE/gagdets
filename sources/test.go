@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/WALL-EEEEEEE/gagdets/core"
+	"github.com/WALL-EEEEEEE/gagdets/items"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -17,7 +18,7 @@ func NewTestTask() TestTask {
 }
 
 func (task *TestTask) Run(collector *core.Collector) {
-	var topics []Topic
+	var topics []items.Topic
 	log.Infof("Start Task %s", task.GetName())
 	json_file := "/mnt/d/Project/go/gagdets/data-Fri Apr 21 17:03:33 CST 2023.json"
 	json_data, err := os.ReadFile(json_file)

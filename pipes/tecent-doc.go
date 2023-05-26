@@ -2,7 +2,7 @@ package pipes
 
 import (
 	"github.com/WALL-EEEEEEE/gagdets/core"
-	"github.com/WALL-EEEEEEE/gagdets/sources"
+	"github.com/WALL-EEEEEEE/gagdets/items"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 )
@@ -19,10 +19,10 @@ func NewTecentDocPipe() StdPipe {
 
 func (pipe *TecentDocPipe) Run(collector *core.Collector) {
 	cnt := 1
-	data := []sources.Topic{}
+	data := []items.Topic{}
 	for item := range *collector {
-		log.Debugf("TecentDocPipe: %v -> %v", collector, item.(sources.Topic).Content)
-		data = append(data, item.(sources.Topic))
+		log.Debugf("TecentDocPipe: %v -> %v", collector, item.(items.Topic).Content)
+		data = append(data, item.(items.Topic))
 		cnt += 1
 	}
 	client := resty.New()
