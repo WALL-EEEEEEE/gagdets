@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/gagdets/items"
 	"github.com/WALL-EEEEEEE/gagdets/utils"
 	"github.com/bobg/go-generics/set"
 	"github.com/gocolly/colly/v2"

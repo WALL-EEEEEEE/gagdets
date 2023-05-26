@@ -2,7 +2,7 @@ package pipes
 
 import (
 	"github.com/WALL-EEEEEEE/gagdets/core"
-	"github.com/WALL-EEEEEEE/gagdets/sources"
+	"github.com/WALL-EEEEEEE/gagdets/items"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -17,7 +17,7 @@ func NewStdPipe() StdPipe {
 func (pipe *StdPipe) Run(collector *core.Collector) {
 	topic_cnt := 0
 	for item := range *collector {
-		log.Debugf("StdPipe: %v -> %v", collector, item.(sources.Topic).Content)
+		log.Debugf("StdPipe: %v -> %v", collector, item.(items.Topic).Content)
 		topic_cnt += 1
 	}
 	log.Infof("StdPipe: %d topics", topic_cnt)

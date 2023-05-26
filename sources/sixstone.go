@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/WALL-EEEEEEE/gagdets/core"
 	"github.com/bobg/go-generics/set"
@@ -53,22 +54,50 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 			}
 		})
 	*/
+	c.SetProxy("http://127.0.0.1:8889")
 	c.OnResponse(func(r *colly.Response) {
 		nodeId := r.Ctx.Get("nodeId")
 		if r.StatusCode != 200 {
 			log.Warnf("Failed to get %s (Request Exception: %s)!", nodeId, r.Body)
 			return
 		}
-		var postListRsp interface{}
-		err := json.Unmarshal(r.Body, postListRsp)
+		var postListRsp map[string]interface{}
+		err := json.Unmarshal(r.Body, &postListRsp)
 		if err != nil {
 			log.Warnf("Failed to get %s (Json Parse Exception: %s)!", nodeId, r.Body)
 			return
 		}
-		log.Infof("%+v", postListRsp)
+		ret_status := postListRsp["code"]
+		if int(ret_status.(float64)) != 200 {
+			log.Warnf("Failed to get %s (Response invalid: %+v)!", nodeId, postListRsp)
+			return
+		}
+		news, _ := postListRsp["data"].(map[string]interface{})["pageInfo"].(map[string]interface{})["list"].([]interface{})
+		if len(news) < 1 {
+			log.Warnf("%s News is empty!", nodeId)
+			return
+		}
+		for _, new := range news {
+			title := new.(map[string]interface{})["name"].(string)
+			ptime := new.(map[string]interface{})["pubTimeLong"]
+			id := new.(map[string]interface{})["contId"]
+			if id == nil {
+				continue
+			}
+			id = int(id.(float64))
+			time_f := ""
+			if ptime != nil {
+				time_f = time.UnixMilli(int64(ptime.(float64))).Format(time.DateTime)
+			}
+			url := fmt.Sprintf("https://www.sixthtone.com/news/%d", id)
+			log.Infof("Get an item:  %s (url: %s, pub: %s)", title, url, time_f)
+		}
 	})
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
+	})
+	c.OnError(func(r *colly.Response, err error) {
+		log.Errorf("Failed to get Request: %s (Exception: %s) ", r.Request.URL.String(), err)
 	})
 	for _, url := range urls.Slice() {
 		b := new(bytes.Buffer)
@@ -81,8 +110,10 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 			"Accept":       []string{"application/json"},
 			"Content-Type": []string{"application/json"},
 		}
+		//log.Infof("%+v", b)
 		ctx.Put("nodeId", "26166")
-		c.Request("POST", url, b, ctx, headers)
+		ctx.Put("page", 1)
+		c.Request("POST", url, bytes.NewReader(b.Bytes()), ctx, headers)
 	}
 }
 
