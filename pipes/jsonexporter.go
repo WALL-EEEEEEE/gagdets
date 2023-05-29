@@ -6,20 +6,20 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/Axiom/core"
 	"github.com/WALL-EEEEEEE/gagdets/items"
 	log "github.com/sirupsen/logrus"
 )
 
 type JsonPipe struct {
-	core.Pipe
+	Pipe
 }
 
 func NewJsonPipe() StdPipe {
-	return StdPipe{Pipe: core.NewPipe("JsonPipe")}
+	return StdPipe{Pipe: NewPipe("JsonPipe")}
 }
 
-func (pipe *JsonPipe) Run(collector *core.Collector) {
+func (pipe *JsonPipe) Run(collector *Collector) {
 	cnt := 0
 	data := []items.Topic{}
 	for item := range *collector {
@@ -40,5 +40,5 @@ func (pipe *JsonPipe) Run(collector *core.Collector) {
 
 func init() {
 	jsonPipe := NewJsonPipe()
-	core.Reg.Register(&jsonPipe)
+	Reg.Register(&jsonPipe)
 }

@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/Axiom/core"
+	. "github.com/WALL-EEEEEEE/gagdets/core"
 	"github.com/bobg/go-generics/set"
 	log "github.com/sirupsen/logrus"
 
@@ -17,7 +18,7 @@ import (
 var sixtone_news_api = "https://api.sixthtone.com/cont/nodeCont/getByNodeId"
 
 type SixtoneSpider struct {
-	core.Spider
+	Spider
 	cnt  int
 	page int
 }
@@ -34,11 +35,11 @@ func NewNewsPost(page int) NewsPost {
 
 func NewSixtoneSpider() SixtoneSpider {
 	urls := []string{sixtone_news_api}
-	spider := SixtoneSpider{core.NewSpider("SixtoneSpider", urls), 0, 1}
+	spider := SixtoneSpider{NewSpider("SixtoneSpider", urls), 0, 1}
 	return spider
 }
 
-func (spider *SixtoneSpider) Run(collector *core.Collector) {
+func (spider *SixtoneSpider) Run(collector *Collector) {
 	c := colly.NewCollector()
 	urls := set.New(spider.Urls...)
 	/*
@@ -118,5 +119,5 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 
 func init() {
 	sixtone_spider := NewSixtoneSpider()
-	core.Reg.Register(&sixtone_spider)
+	Reg.Register(&sixtone_spider)
 }

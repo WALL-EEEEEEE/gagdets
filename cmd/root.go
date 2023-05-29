@@ -6,7 +6,7 @@ import (
 	"path"
 	"runtime"
 
-	"github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/Axiom/core"
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/bobg/go-generics/maps"
 	"github.com/pterm/pterm"
@@ -33,17 +33,17 @@ func start() {
 	init_log()
 	var spiders []string
 	var pipes []string
-	spider_servs := core.Reg.GetByType(core.SPIDER)
-	pipe_servs := core.Reg.GetByType(core.PIPE)
+	spider_servs := Reg.GetByType(SPIDER)
+	pipe_servs := Reg.GetByType(PIPE)
 	spiders = maps.Keys(spider_servs)
 	pipes = maps.Keys(pipe_servs)
 	spiderSelected, _ := pterm.DefaultInteractiveSelect.WithOptions(spiders).Show("Select your spider: ")
 	pipeSelected, _ := pterm.DefaultInteractiveSelect.WithOptions(pipes).Show("Select your pipe: ")
-	spider_serv_selected := spider_servs[spiderSelected].(core.IRunnable)
-	pipe_serv_selected := pipe_servs[pipeSelected].(core.IPipe)
-	core.Exec.Add(spider_serv_selected)
-	core.Exec.AddPipe(pipe_serv_selected)
-	core.Exec.Start()
+	spider_serv_selected := spider_servs[spiderSelected].(IRunnable)
+	pipe_serv_selected := pipe_servs[pipeSelected].(IPipe)
+	Exec.Add(spider_serv_selected)
+	Exec.AddPipe(pipe_serv_selected)
+	Exec.Start()
 }
 
 var rootCmd = &cobra.Command{

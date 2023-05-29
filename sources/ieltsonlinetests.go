@@ -6,7 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/Axiom/core"
+	. "github.com/WALL-EEEEEEE/gagdets/core"
 	. "github.com/WALL-EEEEEEE/gagdets/items"
 	"github.com/WALL-EEEEEEE/gagdets/utils"
 	"github.com/bobg/go-generics/set"
@@ -17,17 +18,17 @@ import (
 var iets_site = "https://ieltsonlinetests.com/speaking-test-collection"
 
 type IETSOnlineTestsSpider struct {
-	core.Spider
+	Spider
 	cnt int
 }
 
 func NewIETSSpider() IETSOnlineTestsSpider {
 	urls := []string{iets_site}
-	spider := IETSOnlineTestsSpider{core.NewSpider("IETSOnlineTestsSpider", urls), 0}
+	spider := IETSOnlineTestsSpider{NewSpider("IETSOnlineTestsSpider", urls), 0}
 	return spider
 }
 
-func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collector *core.Collector) {
+func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collector *Collector) {
 	part1 := e.ChildTexts("#recording-accordion > div:nth-child(2) > #part1 > div > ul > li") //Introduction and Interview Part
 	part2 := e.ChildTexts("#recording-accordion > div:nth-child(3) > #part2 > div > ul > li") //Topic Part
 	part3 := e.ChildTexts("#recording-accordion > div:nth-child(4) > #part3 > div > ul > li") //Topic Discussion
@@ -52,7 +53,7 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collec
 	}
 }
 
-func (spider *IETSOnlineTestsSpider) Run(collector *core.Collector) {
+func (spider *IETSOnlineTestsSpider) Run(collector *Collector) {
 	c := colly.NewCollector()
 	urls := set.New(spider.Urls...)
 	c.OnRequest(func(r *colly.Request) {
@@ -99,5 +100,5 @@ func (spider *IETSOnlineTestsSpider) Run(collector *core.Collector) {
 
 func init() {
 	iets_spider := NewIETSSpider()
-	core.Reg.Register(&iets_spider)
+	Reg.Register(&iets_spider)
 }
