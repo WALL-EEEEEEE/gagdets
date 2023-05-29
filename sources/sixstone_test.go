@@ -3,7 +3,7 @@ package sources
 import (
 	"testing"
 
-	"github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/Axiom/core"
 	"github.com/WALL-EEEEEEE/gagdets/pipes"
 )
 
@@ -20,7 +20,7 @@ func TestSixtone(t *testing.T) {
 	*/
 	sixtone_spider := NewSixtoneSpider()
 	std_pipe := pipes.NewStdPipe()
-	core.Exec.Add(&sixtone_spider)
-	core.Exec.AddPipe(&std_pipe)
-	core.Exec.Start()
+	Exec.Add(&sixtone_spider)
+	Exec.AddPipe(&std_pipe)
+	Exec.Start()
 }
