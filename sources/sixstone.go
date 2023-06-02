@@ -62,7 +62,7 @@ func pagingNews(node_name string, node_id string, page int, c *colly.Collector) 
 	log.Infof("Getting <%s>(%s) Section ... at %d page", node_name, node_id, page)
 	ctx.Put("nodeId", node_id)
 	ctx.Put("nodeName", node_name)
-	ctx.Put("page", page)
+	ctx.Put("page", strconv.Itoa(page))
 	c.Request("POST", sixtone_news_api, bytes.NewReader(b.Bytes()), ctx, headers)
 }
 
