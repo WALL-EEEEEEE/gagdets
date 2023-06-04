@@ -5,9 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+<<<<<<< HEAD
+=======
+	"strconv"
+	"strings"
+>>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	"time"
 
-	"github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/Axiom/core"
+	. "github.com/WALL-EEEEEEE/gagdets/core"
 	"github.com/bobg/go-generics/set"
 	log "github.com/sirupsen/logrus"
 
@@ -17,7 +23,7 @@ import (
 var sixtone_news_api = "https://api.sixthtone.com/cont/nodeCont/getByNodeId"
 
 type SixtoneSpider struct {
-	core.Spider
+	Spider
 	cnt  int
 	page int
 }
@@ -28,17 +34,42 @@ type NewsPost struct {
 	PageSize int    `json:"pageSize"`
 }
 
-func NewNewsPost(page int) NewsPost {
-	return NewsPost{NodeId: "26166", PageNum: page, PageSize: 20}
+func NewNewsPost(nodeId string, page int) NewsPost {
+	return NewsPost{NodeId: string(nodeId), PageNum: page, PageSize: 20}
 }
 
 func NewSixtoneSpider() SixtoneSpider {
-	urls := []string{sixtone_news_api}
-	spider := SixtoneSpider{core.NewSpider("SixtoneSpider", urls), 0, 1}
+	urls := []string{
+		"26166,News",          //<News> section in SixTone
+		"26167,Features",      //<Features> section in SixTone
+		"26168,VOICE &OPNION", //<VOICES & OPINION> section in SixTone
+		"26290,MULTIMEDIA",    //<MULTIMEDIA> section in SixTone
+		"26291,DAILY TONES",   //<DAILY TONES> section in SixTone
+		"26301,SIXTH TONE ×",  //<SIXTH TONE ×> section in SixTone
+	}
+	spider := SixtoneSpider{NewSpider("SixtoneSpider", urls), 0, 1}
 	return spider
 }
 
-func (spider *SixtoneSpider) Run(collector *core.Collector) {
+func pagingNews(node_name string, node_id string, page int, c *colly.Collector) {
+	b := new(bytes.Buffer)
+	err := json.NewEncoder(b).Encode(NewNewsPost(node_id, page))
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx := colly.NewContext()
+	headers := http.Header{
+		"Accept":       []string{"application/json"},
+		"Content-Type": []string{"application/json"},
+	}
+	log.Infof("Getting <%s>(%s) Section ... at %d page", node_name, node_id, page)
+	ctx.Put("nodeId", node_id)
+	ctx.Put("nodeName", node_name)
+	ctx.Put("page", strconv.Itoa(page))
+	c.Request("POST", sixtone_news_api, bytes.NewReader(b.Bytes()), ctx, headers)
+}
+
+func (spider *SixtoneSpider) Run(collector *Collector) {
 	c := colly.NewCollector()
 	urls := set.New(spider.Urls...)
 	/*
@@ -54,9 +85,16 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 			}
 		})
 	*/
+<<<<<<< HEAD
 	c.SetProxy("http://127.0.0.1:8889")
+=======
+	//c.SetProxy("http://127.0.0.1:8889")
+>>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	c.OnResponse(func(r *colly.Response) {
 		nodeId := r.Ctx.Get("nodeId")
+		nodeName := r.Ctx.Get("nodeName")
+		page, _ := strconv.Atoi(r.Ctx.Get("page"))
+
 		if r.StatusCode != 200 {
 			log.Warnf("Failed to get %s (Request Exception: %s)!", nodeId, r.Body)
 			return
@@ -73,6 +111,11 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 			return
 		}
 		news, _ := postListRsp["data"].(map[string]interface{})["pageInfo"].(map[string]interface{})["list"].([]interface{})
+<<<<<<< HEAD
+=======
+		has_next, _ := postListRsp["data"].(map[string]interface{})["pageInfo"].(map[string]interface{})["hasNext"].(bool)
+		//_total, _ := postListRsp["data"].(map[string]interface{})["pageInfo"].(map[string]interface{})["total"].(float64)
+>>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 		if len(news) < 1 {
 			log.Warnf("%s News is empty!", nodeId)
 			return
@@ -87,11 +130,22 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 			id = int(id.(float64))
 			time_f := ""
 			if ptime != nil {
+<<<<<<< HEAD
 				time_f = time.UnixMilli(int64(ptime.(float64))).Format(time.DateTime)
+=======
+				time_f = time.UnixMilli(int64(ptime.(float64))).Format("2006-01-02 15:04:05")
+>>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 			}
 			url := fmt.Sprintf("https://www.sixthtone.com/news/%d", id)
 			log.Infof("Get an item:  %s (url: %s, pub: %s)", title, url, time_f)
 		}
+<<<<<<< HEAD
+=======
+		if has_next {
+			page = page + 1
+			pagingNews(nodeName, nodeId, page, c)
+		}
+>>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	})
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
@@ -99,6 +153,7 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 	c.OnError(func(r *colly.Response, err error) {
 		log.Errorf("Failed to get Request: %s (Exception: %s) ", r.Request.URL.String(), err)
 	})
+<<<<<<< HEAD
 	for _, url := range urls.Slice() {
 		b := new(bytes.Buffer)
 		err := json.NewEncoder(b).Encode(NewNewsPost(1))
@@ -114,10 +169,17 @@ func (spider *SixtoneSpider) Run(collector *core.Collector) {
 		ctx.Put("nodeId", "26166")
 		ctx.Put("page", 1)
 		c.Request("POST", url, bytes.NewReader(b.Bytes()), ctx, headers)
+=======
+	for _, nodeId := range urls.Slice() {
+		node_splits := strings.Split(nodeId, ",")
+		node_id := node_splits[0]
+		node_name := node_splits[1]
+		pagingNews(node_name, node_id, 1, c)
+>>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	}
 }
 
 func init() {
 	sixtone_spider := NewSixtoneSpider()
-	core.Reg.Register(&sixtone_spider)
+	Reg.Register(&sixtone_spider)
 }

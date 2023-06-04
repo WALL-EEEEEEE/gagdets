@@ -1,20 +1,24 @@
 package pipes
 
 import (
+<<<<<<< HEAD
 	"github.com/WALL-EEEEEEE/gagdets/core"
+=======
+	. "github.com/WALL-EEEEEEE/Axiom/core"
+>>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	"github.com/WALL-EEEEEEE/gagdets/items"
 	log "github.com/sirupsen/logrus"
 )
 
 type StdPipe struct {
-	core.Pipe
+	Pipe
 }
 
 func NewStdPipe() StdPipe {
-	return StdPipe{Pipe: core.NewPipe("StdPipe")}
+	return StdPipe{Pipe: NewPipe("StdPipe")}
 }
 
-func (pipe *StdPipe) Run(collector *core.Collector) {
+func (pipe *StdPipe) Run(collector *Collector) {
 	topic_cnt := 0
 	for item := range *collector {
 		log.Debugf("StdPipe: %v -> %v", collector, item.(items.Topic).Content)
@@ -25,5 +29,5 @@ func (pipe *StdPipe) Run(collector *core.Collector) {
 
 func init() {
 	stdPipe := NewStdPipe()
-	core.Reg.Register(&stdPipe)
+	Reg.Register(&stdPipe)
 }

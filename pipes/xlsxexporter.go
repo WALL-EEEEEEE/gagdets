@@ -1,19 +1,19 @@
 package pipes
 
 import (
-	"github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/Axiom/core"
 	log "github.com/sirupsen/logrus"
 )
 
 type XlsxPipe struct {
-	core.Pipe
+	Pipe
 }
 
 func NewXlsxPipe() StdPipe {
-	return StdPipe{Pipe: core.NewPipe("TecentDocPipe")}
+	return StdPipe{Pipe: NewPipe("TecentDocPipe")}
 }
 
-func (pipe *XlsxPipe) Run(collector *core.Collector) {
+func (pipe *XlsxPipe) Run(collector *Collector) {
 	topic_cnt := 1
 	for item := range *collector {
 		log.Info(item)
@@ -25,5 +25,5 @@ func (pipe *XlsxPipe) Run(collector *core.Collector) {
 
 func init() {
 	xlsxPipe := NewXlsxPipe()
-	core.Reg.Register(&xlsxPipe)
+	Reg.Register(&xlsxPipe)
 }

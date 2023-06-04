@@ -1,7 +1,11 @@
 package pipes
 
 import (
+<<<<<<< HEAD
 	"github.com/WALL-EEEEEEE/gagdets/core"
+=======
+	. "github.com/WALL-EEEEEEE/Axiom/core"
+>>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	"github.com/WALL-EEEEEEE/gagdets/items"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
@@ -10,14 +14,14 @@ import (
 var tecent_link_api = "https://api.hiflow.tencent.com/engine/webhook/31/1646403589125844994"
 
 type TecentDocPipe struct {
-	core.Pipe
+	Pipe
 }
 
 func NewTecentDocPipe() StdPipe {
-	return StdPipe{Pipe: core.NewPipe("TecentDocPipe")}
+	return StdPipe{Pipe: NewPipe("TecentDocPipe")}
 }
 
-func (pipe *TecentDocPipe) Run(collector *core.Collector) {
+func (pipe *TecentDocPipe) Run(collector *Collector) {
 	cnt := 1
 	data := []items.Topic{}
 	for item := range *collector {
@@ -39,5 +43,5 @@ func (pipe *TecentDocPipe) Run(collector *core.Collector) {
 
 func init() {
 	tecentDocPipe := NewTecentDocPipe()
-	core.Reg.Register(&tecentDocPipe)
+	Reg.Register(&tecentDocPipe)
 }

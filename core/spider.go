@@ -1,5 +1,9 @@
 package core
 
+import (
+	. "github.com/WALL-EEEEEEE/Axiom/core"
+)
+
 type Spider struct {
 	Task
 	Urls []string
@@ -14,7 +18,7 @@ func NewSpider(name string, urls []string) Spider {
 }
 
 func (spider *Spider) GetName() string {
-	return spider.name
+	return spider.Task.GetName()
 }
 
 func (spider *Spider) GetType() []ServType {
