@@ -1,11 +1,7 @@
 package pipes
 
 import (
-<<<<<<< HEAD
-	"github.com/WALL-EEEEEEE/gagdets/core"
-=======
 	. "github.com/WALL-EEEEEEE/Axiom/core"
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	"github.com/WALL-EEEEEEE/gagdets/items"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"

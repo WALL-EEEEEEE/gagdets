@@ -5,11 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-<<<<<<< HEAD
-=======
 	"strconv"
 	"strings"
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	"time"
 
 	. "github.com/WALL-EEEEEEE/Axiom/core"
@@ -85,11 +82,7 @@ func (spider *SixtoneSpider) Run(collector *Collector) {
 			}
 		})
 	*/
-<<<<<<< HEAD
-	c.SetProxy("http://127.0.0.1:8889")
-=======
 	//c.SetProxy("http://127.0.0.1:8889")
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	c.OnResponse(func(r *colly.Response) {
 		nodeId := r.Ctx.Get("nodeId")
 		nodeName := r.Ctx.Get("nodeName")
@@ -111,11 +104,8 @@ func (spider *SixtoneSpider) Run(collector *Collector) {
 			return
 		}
 		news, _ := postListRsp["data"].(map[string]interface{})["pageInfo"].(map[string]interface{})["list"].([]interface{})
-<<<<<<< HEAD
-=======
 		has_next, _ := postListRsp["data"].(map[string]interface{})["pageInfo"].(map[string]interface{})["hasNext"].(bool)
 		//_total, _ := postListRsp["data"].(map[string]interface{})["pageInfo"].(map[string]interface{})["total"].(float64)
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 		if len(news) < 1 {
 			log.Warnf("%s News is empty!", nodeId)
 			return
@@ -130,22 +120,15 @@ func (spider *SixtoneSpider) Run(collector *Collector) {
 			id = int(id.(float64))
 			time_f := ""
 			if ptime != nil {
-<<<<<<< HEAD
-				time_f = time.UnixMilli(int64(ptime.(float64))).Format(time.DateTime)
-=======
 				time_f = time.UnixMilli(int64(ptime.(float64))).Format("2006-01-02 15:04:05")
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 			}
 			url := fmt.Sprintf("https://www.sixthtone.com/news/%d", id)
 			log.Infof("Get an item:  %s (url: %s, pub: %s)", title, url, time_f)
 		}
-<<<<<<< HEAD
-=======
 		if has_next {
 			page = page + 1
 			pagingNews(nodeName, nodeId, page, c)
 		}
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	})
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
@@ -153,29 +136,11 @@ func (spider *SixtoneSpider) Run(collector *Collector) {
 	c.OnError(func(r *colly.Response, err error) {
 		log.Errorf("Failed to get Request: %s (Exception: %s) ", r.Request.URL.String(), err)
 	})
-<<<<<<< HEAD
-	for _, url := range urls.Slice() {
-		b := new(bytes.Buffer)
-		err := json.NewEncoder(b).Encode(NewNewsPost(1))
-		if err != nil {
-			log.Fatal(err)
-		}
-		ctx := colly.NewContext()
-		headers := http.Header{
-			"Accept":       []string{"application/json"},
-			"Content-Type": []string{"application/json"},
-		}
-		//log.Infof("%+v", b)
-		ctx.Put("nodeId", "26166")
-		ctx.Put("page", 1)
-		c.Request("POST", url, bytes.NewReader(b.Bytes()), ctx, headers)
-=======
 	for _, nodeId := range urls.Slice() {
 		node_splits := strings.Split(nodeId, ",")
 		node_id := node_splits[0]
 		node_name := node_splits[1]
 		pagingNews(node_name, node_id, 1, c)
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	}
 }
 

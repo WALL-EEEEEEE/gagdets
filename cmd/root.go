@@ -39,19 +39,11 @@ func start() {
 	pipes = maps.Keys(pipe_servs)
 	spiderSelected, _ := pterm.DefaultInteractiveSelect.WithOptions(spiders).Show("Select your spider: ")
 	pipeSelected, _ := pterm.DefaultInteractiveSelect.WithOptions(pipes).Show("Select your pipe: ")
-<<<<<<< HEAD
-	spider_serv_selected := spider_servs[spiderSelected].(core.IRunnable)
-	pipe_serv_selected := pipe_servs[pipeSelected].(core.IPipe)
-	core.Exec.Add(spider_serv_selected)
-	core.Exec.AddPipe(pipe_serv_selected)
-	core.Exec.Start()
-=======
 	spider_serv_selected := spider_servs[spiderSelected].(IRunnable)
 	pipe_serv_selected := pipe_servs[pipeSelected].(IPipe)
 	Exec.Add(spider_serv_selected)
 	Exec.AddPipe(pipe_serv_selected)
 	Exec.Start()
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 }
 
 var rootCmd = &cobra.Command{
