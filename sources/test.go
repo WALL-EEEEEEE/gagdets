@@ -4,11 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
-<<<<<<< HEAD
-	"github.com/WALL-EEEEEEE/gagdets/core"
-=======
 	. "github.com/WALL-EEEEEEE/Axiom/core"
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	"github.com/WALL-EEEEEEE/gagdets/items"
 	log "github.com/sirupsen/logrus"
 )
@@ -21,11 +17,7 @@ func NewTestTask() TestTask {
 	return TestTask{Task: NewTask("TestTask")}
 }
 
-<<<<<<< HEAD
-func (task *TestTask) Run(collector *core.Collector) {
-=======
 func (task *TestTask) Run(collector *Collector) {
->>>>>>> aa185959b593dc2e181ba7238de572c30881c8d8
 	var topics []items.Topic
 	log.Infof("Start Task %s", task.GetName())
 	json_file := "/mnt/d/Project/go/gagdets/data-Fri Apr 21 17:03:33 CST 2023.json"
