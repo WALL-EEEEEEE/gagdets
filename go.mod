@@ -3,7 +3,7 @@ module github.com/WALL-EEEEEEE/gagdets
 go 1.19
 
 require (
-	github.com/WALL-EEEEEEE/Axiom v0.0.0-20230529112332-5c8d222b6a8d
+	github.com/WALL-EEEEEEE/Axiom v0.0.0-20230608113017-7f86030dcaef
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -51,5 +51,3 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 )
-
-replace github.com/WALL-EEEEEEE/Axiom v0.0.0-20230529112332-5c8d222b6a8d => ./axiom
