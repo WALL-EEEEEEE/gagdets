@@ -1,6 +1,6 @@
 module github.com/WALL-EEEEEEE/gagdets
 
-go 1.19
+go 1.17
 
 require (
 	github.com/WALL-EEEEEEE/Axiom v0.0.0-20230608113017-7f86030dcaef
