@@ -9,7 +9,7 @@ type Spider struct {
 	Urls []string
 }
 
-func (*Spider) Run(collector *Collector) {
+func (*Spider) Run() {
 }
 
 func NewSpider(name string, urls []string) Spider {
