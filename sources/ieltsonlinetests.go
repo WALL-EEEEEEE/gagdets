@@ -28,7 +28,7 @@ func NewIETSSpider() IETSOnlineTestsSpider {
 	return spider
 }
 
-func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collector *Collector) {
+func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement) {
 	part1 := e.ChildTexts("#recording-accordion > div:nth-child(2) > #part1 > div > ul > li") //Introduction and Interview Part
 	part2 := e.ChildTexts("#recording-accordion > div:nth-child(3) > #part2 > div > ul > li") //Topic Part
 	part3 := e.ChildTexts("#recording-accordion > div:nth-child(4) > #part3 > div > ul > li") //Topic Discussion
@@ -48,12 +48,12 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement, collec
 			ExtraLink:  e.Request.URL.String(),
 		}
 		log.Infof("Topic: %s", item)
-		*collector <- topic
+		spider.GetOutputStream().In() <- topic
 		spider.cnt++
 	}
 }
 
-func (spider *IETSOnlineTestsSpider) Run(collector *Collector) {
+func (spider *IETSOnlineTestsSpider) Run() {
 	c := colly.NewCollector()
 	urls := set.New(spider.Urls...)
 	c.OnRequest(func(r *colly.Request) {
@@ -74,7 +74,7 @@ func (spider *IETSOnlineTestsSpider) Run(collector *Collector) {
 		}
 	})
 	c.OnHTML("div[id='recording-accordion']", func(h *colly.HTMLElement) {
-		spider.parseTopicList(h, collector)
+		spider.parseTopicList(h)
 	})
 	c.OnHTML("nav[class~='pager']", func(h *colly.HTMLElement) {
 		next_page_href := h.ChildAttr("ul > li.pager__item--next > a", "href")
