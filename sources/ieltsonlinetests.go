@@ -48,7 +48,8 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement) {
 			ExtraLink:  e.Request.URL.String(),
 		}
 		log.Infof("Topic: %s", item)
-		spider.GetOutputStream().In() <- topic
+		out_stream := spider.GetOutputStream()
+		out_stream.In() <- topic
 		spider.cnt++
 	}
 }
