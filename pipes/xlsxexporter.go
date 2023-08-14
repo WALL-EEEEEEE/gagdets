@@ -2,6 +2,7 @@ package pipes
 
 import (
 	. "github.com/WALL-EEEEEEE/Axiom/core"
+	. "github.com/WALL-EEEEEEE/gagdets/core"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -13,9 +14,10 @@ func NewXlsxPipe() StdPipe {
 	return StdPipe{Pipe: NewPipe("TecentDocPipe")}
 }
 
-func (pipe *XlsxPipe) Run(collector *Collector) {
+func (pipe *XlsxPipe) Run() {
 	topic_cnt := 1
-	for item := range *collector {
+	output_stream := pipe.Pipe.GetOutputStream().Out()
+	for item := range output_stream {
 		log.Info(item)
 		topic_cnt += 1
 	}

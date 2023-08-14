@@ -4,23 +4,22 @@ import (
 	. "github.com/WALL-EEEEEEE/Axiom/core"
 )
 
-type IPipe interface {
-	ITask
-}
-
 type Pipe struct {
 	Task
-	name string
+}
+
+func (*Pipe) Run() {
 }
 
 func NewPipe(name string) Pipe {
-	return Pipe{name: name}
+	pipe := Pipe{Task: NewTask(name)}
+	return pipe
 }
 
-func (pipe Pipe) GetName() string {
-	return pipe.name
+func (pipe *Pipe) GetName() string {
+	return pipe.Task.GetName()
 }
 
-func (pipe Pipe) GetType() []ServType {
+func (spider *Pipe) GetType() []ServType {
 	return []ServType{PIPE}
 }

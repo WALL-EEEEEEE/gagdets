@@ -7,7 +7,8 @@ import (
 	"time"
 
 	. "github.com/WALL-EEEEEEE/Axiom/core"
-	"github.com/WALL-EEEEEEE/gagdets/items"
+	. "github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/gagdets/items"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -19,12 +20,13 @@ func NewJsonPipe() StdPipe {
 	return StdPipe{Pipe: NewPipe("JsonPipe")}
 }
 
-func (pipe *JsonPipe) Run(collector *Collector) {
+func (pipe *JsonPipe) Run() {
 	cnt := 0
-	data := []items.Topic{}
-	for item := range *collector {
-		log.Debugf("JsonPipe: %v -> %v", collector, item.(items.Topic).Content)
-		data = append(data, item.(items.Topic))
+	data := []Topic{}
+	output_stream := pipe.GetOutputStream().Out()
+	for item := range output_stream {
+		log.Debugf("JsonPipe: %v -> %v", output_stream, item.(Topic).Content)
+		data = append(data, item.(Topic))
 		cnt += 1
 	}
 	if len(data) < 1 {
