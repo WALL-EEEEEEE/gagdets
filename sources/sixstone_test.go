@@ -20,8 +20,7 @@ func TestSixtone(t *testing.T) {
 	*/
 	sixtone_spider := NewSixtoneSpider()
 	std_pipe := pipes.NewStdPipe()
-	sixtone_spider.Chain(std_pipe)
-
+	sixtone_spider.Chain(&std_pipe)
 	Exec.Add(&sixtone_spider)
 	Exec.Start()
 }

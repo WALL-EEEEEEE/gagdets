@@ -2,7 +2,8 @@ package pipes
 
 import (
 	. "github.com/WALL-EEEEEEE/Axiom/core"
-	"github.com/WALL-EEEEEEE/gagdets/items"
+	. "github.com/WALL-EEEEEEE/gagdets/core"
+	. "github.com/WALL-EEEEEEE/gagdets/items"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 )
@@ -17,12 +18,13 @@ func NewTecentDocPipe() StdPipe {
 	return StdPipe{Pipe: NewPipe("TecentDocPipe")}
 }
 
-func (pipe *TecentDocPipe) Run(collector *Collector) {
+func (pipe *TecentDocPipe) Run() {
 	cnt := 1
-	data := []items.Topic{}
-	for item := range *collector {
-		log.Debugf("TecentDocPipe: %v -> %v", collector, item.(items.Topic).Content)
-		data = append(data, item.(items.Topic))
+	data := []Topic{}
+	output_stream := pipe.Pipe.GetOutputStream().Out()
+	for item := range output_stream {
+		log.Debugf("TecentDocPipe: %v -> %v", output_stream, item.(Topic).Content)
+		data = append(data, item.(Topic))
 		cnt += 1
 	}
 	client := resty.New()
