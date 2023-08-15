@@ -148,7 +148,8 @@ func (spider *SixtoneSpider) Run() {
 			item_content := e.Text
 			news_item := NewsItem{Content: item_content, PubTime: item_pubtime, Url: req_url, Title: item_title}
 			log.Debugf("Find an Item: %+v ", news_item)
-			spider.GetOutputStream().In() <- news_item
+			out_stream := spider.GetOutputStream()
+			out_stream.In() <- news_item
 		}
 	})
 	c.OnRequest(func(r *colly.Request) {
