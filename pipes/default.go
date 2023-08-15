@@ -12,7 +12,9 @@ type StdPipe struct {
 }
 
 func NewStdPipe() StdPipe {
-	return StdPipe{Pipe: NewPipe("StdPipe")}
+	std_pipe := StdPipe{Pipe: NewPipe("StdPipe")}
+	std_pipe.ITask = &std_pipe
+	return std_pipe
 }
 
 func (pipe *StdPipe) Run() {

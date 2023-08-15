@@ -12,7 +12,9 @@ type TestTask struct {
 }
 
 func NewTestTask() TestTask {
-	return TestTask{Task: NewTask("TestTask")}
+	task := TestTask{Task: NewTask("TestTask")}
+	task.ITask = &task
+	return task
 }
 
 func (task *TestTask) Run() {

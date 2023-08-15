@@ -10,6 +10,7 @@ type Pipe struct {
 
 func NewPipe(name string) Pipe {
 	pipe := Pipe{Task: NewTask(name)}
+	pipe.ITask = &pipe
 	return pipe
 }
 
