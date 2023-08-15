@@ -10,14 +10,14 @@ type XlsxPipe struct {
 	Pipe
 }
 
-func NewXlsxPipe() StdPipe {
-	return StdPipe{Pipe: NewPipe("TecentDocPipe")}
+func NewXlsxPipe() XlsxPipe {
+	return XlsxPipe{Pipe: NewPipe("TecentDocPipe")}
 }
 
 func (pipe *XlsxPipe) Run() {
 	topic_cnt := 1
-	output_stream := pipe.Pipe.GetOutputStream().Out()
-	for item := range output_stream {
+	output_stream := pipe.Pipe.GetOutputStream()
+	for item := range output_stream.Out() {
 		log.Info(item)
 		topic_cnt += 1
 	}

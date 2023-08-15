@@ -9,9 +9,6 @@ type Spider struct {
 	Urls []string
 }
 
-func (*Spider) Run() {
-}
-
 func NewSpider(name string, urls []string) Spider {
 	spider := Spider{Task: NewTask(name), Urls: urls}
 	return spider

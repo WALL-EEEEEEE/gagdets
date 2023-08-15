@@ -8,9 +8,6 @@ type Pipe struct {
 	Task
 }
 
-func (*Pipe) Run() {
-}
-
 func NewPipe(name string) Pipe {
 	pipe := Pipe{Task: NewTask(name)}
 	return pipe

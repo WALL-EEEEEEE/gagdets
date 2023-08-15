@@ -16,15 +16,15 @@ type JsonPipe struct {
 	Pipe
 }
 
-func NewJsonPipe() StdPipe {
-	return StdPipe{Pipe: NewPipe("JsonPipe")}
+func NewJsonPipe() JsonPipe {
+	return JsonPipe{Pipe: NewPipe("JsonPipe")}
 }
 
 func (pipe *JsonPipe) Run() {
 	cnt := 0
 	data := []Topic{}
-	output_stream := pipe.GetOutputStream().Out()
-	for item := range output_stream {
+	output_stream := pipe.GetOutputStream()
+	for item := range output_stream.Out() {
 		log.Debugf("JsonPipe: %v -> %v", output_stream, item.(Topic).Content)
 		data = append(data, item.(Topic))
 		cnt += 1

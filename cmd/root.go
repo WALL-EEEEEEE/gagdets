@@ -35,7 +35,7 @@ func start() {
 	spider_servs := Reg.GetByType(SPIDER)
 	spiders = maps.Keys(spider_servs)
 	spiderSelected, _ := pterm.DefaultInteractiveSelect.WithOptions(spiders).Show("Select your spider: ")
-	spider_serv_selected := spider_servs[spiderSelected].(IRunnable)
+	spider_serv_selected := spider_servs[spiderSelected].(ITask)
 	Exec.Add(spider_serv_selected)
 	Exec.Start()
 }
