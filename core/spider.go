@@ -9,11 +9,9 @@ type Spider struct {
 	Urls []string
 }
 
-func (*Spider) Run(collector *Collector) {
-}
-
 func NewSpider(name string, urls []string) Spider {
 	spider := Spider{Task: NewTask(name), Urls: urls}
+	spider.ITask = &spider
 	return spider
 }
 

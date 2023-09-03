@@ -32,17 +32,11 @@ func init_log() {
 func start() {
 	init_log()
 	var spiders []string
-	var pipes []string
 	spider_servs := Reg.GetByType(SPIDER)
-	pipe_servs := Reg.GetByType(PIPE)
 	spiders = maps.Keys(spider_servs)
-	pipes = maps.Keys(pipe_servs)
 	spiderSelected, _ := pterm.DefaultInteractiveSelect.WithOptions(spiders).Show("Select your spider: ")
-	pipeSelected, _ := pterm.DefaultInteractiveSelect.WithOptions(pipes).Show("Select your pipe: ")
-	spider_serv_selected := spider_servs[spiderSelected].(IRunnable)
-	pipe_serv_selected := pipe_servs[pipeSelected].(IPipe)
+	spider_serv_selected := spider_servs[spiderSelected].(ITask)
 	Exec.Add(spider_serv_selected)
-	Exec.AddPipe(pipe_serv_selected)
 	Exec.Start()
 }
 

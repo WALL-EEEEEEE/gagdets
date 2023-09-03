@@ -9,6 +9,7 @@ import (
 	"path"
 
 	. "github.com/WALL-EEEEEEE/Axiom/core"
+	. "github.com/WALL-EEEEEEE/gagdets/core"
 	"github.com/WALL-EEEEEEE/gagdets/items"
 	log "github.com/sirupsen/logrus"
 )
@@ -23,11 +24,12 @@ func NewNewsPipe() NewsPipe {
 	return NewsPipe{Pipe: NewPipe("NewsPipe")}
 }
 
-func (pipe *NewsPipe) Run(collector *Collector) {
+func (pipe *NewsPipe) Run() {
 	cnt := 0
-	for item := range *collector {
+	output_stream := pipe.GetOutputStream()
+	for item := range output_stream.Out() {
 		title := item.(items.NewsItem).Title
-		log.Debugf("FilePipe: %v -> %v", collector, title)
+		log.Debugf("FilePipe: %v -> %v", output_stream, title)
 		output_item_file := path.Join(default_outdir, fmt.Sprintf("%s.json", title))
 		json_data, _ := json.MarshalIndent(item, "", " ")
 		_, err := os.Stat(default_outdir)
