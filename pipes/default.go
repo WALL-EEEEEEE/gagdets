@@ -20,7 +20,11 @@ func NewStdPipe() StdPipe {
 func (pipe *StdPipe) Run() {
 	topic_cnt := 0
 	out_stream := pipe.GetOutputStream()
-	for item := range out_stream.Out() {
+	for {
+		item, ok := out_stream.Read()
+		if !ok {
+			break
+		}
 		log.Debugf("StdPipe: %v -> %v", out_stream, item.(Topic).Content)
 		topic_cnt += 1
 	}

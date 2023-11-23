@@ -22,7 +22,11 @@ func (pipe *TecentDocPipe) Run() {
 	cnt := 1
 	data := []Topic{}
 	output_stream := pipe.Pipe.GetOutputStream()
-	for item := range output_stream.Out() {
+	for {
+		item, ok := output_stream.Read()
+		if !ok {
+			break
+		}
 		log.Debugf("TecentDocPipe: %v -> %v", output_stream, item.(Topic).Content)
 		data = append(data, item.(Topic))
 		cnt += 1
@@ -35,7 +39,6 @@ func (pipe *TecentDocPipe) Run() {
 	if err != nil {
 		log.Error(err)
 	}
-
 	log.Infof("Sync %d topics to tencent doc!", cnt)
 }
 

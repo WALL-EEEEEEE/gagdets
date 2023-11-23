@@ -49,7 +49,7 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement) {
 		}
 		log.Infof("Topic: %s", item)
 		out_stream := spider.GetOutputStream()
-		out_stream.In() <- topic
+		out_stream.Write(topic)
 		spider.cnt++
 	}
 }

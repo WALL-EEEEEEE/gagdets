@@ -24,7 +24,11 @@ func (pipe *JsonPipe) Run() {
 	cnt := 0
 	data := []Topic{}
 	output_stream := pipe.GetOutputStream()
-	for item := range output_stream.Out() {
+	for {
+		item, ok := output_stream.Read()
+		if !ok {
+			break
+		}
 		log.Debugf("JsonPipe: %v -> %v", output_stream, item.(Topic).Content)
 		data = append(data, item.(Topic))
 		cnt += 1

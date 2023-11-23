@@ -27,7 +27,11 @@ func NewNewsPipe() NewsPipe {
 func (pipe *NewsPipe) Run() {
 	cnt := 0
 	output_stream := pipe.GetOutputStream()
-	for item := range output_stream.Out() {
+	for {
+		item, ok := output_stream.Read()
+		if !ok {
+			break
+		}
 		title := item.(items.NewsItem).Title
 		log.Debugf("FilePipe: %v -> %v", output_stream, title)
 		output_item_file := path.Join(default_outdir, fmt.Sprintf("%s.json", title))

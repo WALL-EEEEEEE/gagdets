@@ -17,7 +17,11 @@ func NewXlsxPipe() XlsxPipe {
 func (pipe *XlsxPipe) Run() {
 	topic_cnt := 1
 	output_stream := pipe.Pipe.GetOutputStream()
-	for item := range output_stream.Out() {
+	for {
+		item, ok := output_stream.Read()
+		if !ok {
+			break
+		}
 		log.Info(item)
 		topic_cnt += 1
 	}

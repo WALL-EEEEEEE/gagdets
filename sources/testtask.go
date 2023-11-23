@@ -27,7 +27,7 @@ func (task *TestTask) Run() {
 	for _, topic := range topics {
 		log.Infof("Find Topic: %+v", topic)
 		in := task.GetInputStream()
-		(&in).In() <- topic
+		(&in).Write(topic)
 	}
 
 }
