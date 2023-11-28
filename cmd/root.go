@@ -31,12 +31,15 @@ func init_log() {
 
 func start() {
 	init_log()
-	var spiders []string
-	spider_servs := Reg.GetByType(SPIDER)
-	spiders = maps.Keys(spider_servs)
-	spiderSelected, _ := pterm.DefaultInteractiveSelect.WithOptions(spiders).Show("Select your spider: ")
-	spider_serv_selected := spider_servs[spiderSelected].(ITask)
-	Exec.Add(spider_serv_selected)
+	servs_map := Reg.GetByType()
+	if len(servs_map) < 1 {
+		log.Warn("No Spider avaliable here")
+		return
+	}
+	servs := maps.Keys(servs_map)
+	serv_name_selected, _ := pterm.DefaultInteractiveSelect.WithOptions(servs).Show("Select your services: ")
+	serv_selected := servs_map[serv_name_selected].(ITask)
+	Exec.Add(serv_selected)
 	Exec.Start()
 }
 

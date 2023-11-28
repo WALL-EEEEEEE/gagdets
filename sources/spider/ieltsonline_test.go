@@ -1,4 +1,4 @@
-package sources
+package spider
 
 import (
 	"testing"
@@ -9,7 +9,7 @@ import (
 
 // TestSixtone calls executor to run Sixtone, checking
 // for a valid return value.
-func TestSixtone(t *testing.T) {
+func TestIELTSONLINE(t *testing.T) {
 	/*
 		name := "Gladys"
 		want := regexp.MustCompile(`\b` + name + `\b`)
@@ -18,9 +18,9 @@ func TestSixtone(t *testing.T) {
 			t.Fatalf(`Hello("Gladys") = %q, %v, want match for %#q, nil`, msg, err, want)
 		}
 	*/
-	sixtone_spider := NewSixtoneSpider()
+	iets_spider := NewIETSSpider()
 	std_pipe := pipes.NewStdPipe()
-	sixtone_spider.Chain(&std_pipe)
-	Exec.Add(&sixtone_spider)
+	iets_spider.Chain(&std_pipe)
+	Exec.Add(&iets_spider)
 	Exec.Start()
 }

@@ -1,4 +1,4 @@
-package sources
+package spider
 
 import (
 	"fmt"
@@ -25,6 +25,7 @@ type IETSOnlineTestsSpider struct {
 func NewIETSSpider() IETSOnlineTestsSpider {
 	urls := []string{iets_site}
 	spider := IETSOnlineTestsSpider{NewSpider("IETSOnlineTestsSpider", urls), 0}
+	spider.ITask = &spider
 	return spider
 }
 
@@ -48,8 +49,8 @@ func (spider *IETSOnlineTestsSpider) parseTopicList(e *colly.HTMLElement) {
 			ExtraLink:  e.Request.URL.String(),
 		}
 		log.Infof("Topic: %s", item)
-		out_stream := spider.GetOutputStream()
-		out_stream.Write(topic)
+		in_stream := spider.GetInputStream()
+		in_stream.Write(topic)
 		spider.cnt++
 	}
 }
@@ -91,6 +92,7 @@ func (spider *IETSOnlineTestsSpider) Run() {
 		if r.StatusCode != 200 {
 			log.Infof("Failed to request information of IETS topics (Request Error: %s)!", r.Body)
 		}
+		log.Info(r.Body)
 	})
 	for _, url := range spider.Urls {
 		c.Visit(url)

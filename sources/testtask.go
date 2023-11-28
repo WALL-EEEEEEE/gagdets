@@ -29,7 +29,6 @@ func (task *TestTask) Run() {
 		in := task.GetInputStream()
 		(&in).Write(topic)
 	}
-
 }
 
 func init() {

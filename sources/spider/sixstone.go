@@ -1,4 +1,4 @@
-package sources
+package spider
 
 import (
 	"bytes"
@@ -47,6 +47,7 @@ func NewSixtoneSpider() SixtoneSpider {
 		"26301,SIXTH TONE ×",  //<SIXTH TONE ×> section in SixTone
 	}
 	spider := SixtoneSpider{NewSpider("SixtoneSpider", urls), 0, 1}
+	spider.ITask = &spider
 	return spider
 }
 
