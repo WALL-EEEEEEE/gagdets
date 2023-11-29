@@ -1,4 +1,4 @@
-package cmd
+package subcmd
 
 import (
 	. "github.com/WALL-EEEEEEE/Axiom/core"
@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var listCmd = &cobra.Command{
+var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the available plugins",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -17,21 +17,17 @@ var listCmd = &cobra.Command{
 			servs := Reg.GetByType(servType)
 			switch servType {
 			case SPIDER:
-				rootCmd.Println(" Spider\n")
+				cmd.Println(" Spider\n")
 			case PIPE:
-				rootCmd.Println(" Pipe\n")
+				cmd.Println(" Pipe\n")
 			case TASK:
-				rootCmd.Println(" Task\n")
+				cmd.Println(" Task\n")
 			}
 			for serv_name, _ := range servs {
-				rootCmd.Println("   " + serv_name)
+				cmd.Println("   " + serv_name)
 			}
-			rootCmd.Println()
+			cmd.Println()
 		}
 
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(listCmd)
 }

@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"fmt"
@@ -7,6 +7,10 @@ import (
 	"runtime"
 
 	. "github.com/WALL-EEEEEEE/Axiom/core"
+	"github.com/WALL-EEEEEEE/gagdets/cmd/gadget/subcmd"
+	_ "github.com/WALL-EEEEEEE/gagdets/sources/spider"
+
+	//. "github.com/WALL-EEEEEEE/gadgets/cmd/gadget/subcmd"
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/bobg/go-generics/maps"
 	"github.com/pterm/pterm"
@@ -53,7 +57,8 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func Execute() {
+func main() {
+	rootCmd.AddCommand(subcmd.ListCmd)
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
