@@ -23,6 +23,9 @@ func NewChatGPT(conf *Config) ChatGPT {
 
 func (c *ChatGPT) Run() {
 	token := c.conf.ChatGPT.Token
+	if len(token) < 1 {
+		log.Fatal("ChatGPT need a token supplied!")
+	}
 	log.Infof("ChatGPT Token: %s", token)
 	client := openai.NewClient(c.conf.ChatGPT.Token)
 	output_stream := c.GetOutputStream()
